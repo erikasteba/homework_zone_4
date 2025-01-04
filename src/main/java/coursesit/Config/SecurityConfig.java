@@ -26,12 +26,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login", "/css/**", "/js/**", "/homepage").permitAll() // Разрешаем доступ ко всем
-                        .anyRequest().authenticated()  // Все остальные страницы требуют аутентификации
+                        .requestMatchers("/register", "/login", "/css/**", "/js/**", "/homepage").permitAll()
+                        .requestMatchers("/add-course").hasRole("ADMIN") // Только для админов
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/profile", true)// Перенаправление на /homepage после успешного логина
+                        .defaultSuccessUrl("/profile", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -39,14 +40,12 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login")
                         .permitAll()
                 )
-                .userDetailsService(customUserDetailsService) // Настройка кастомного UserDetailsService
+                .userDetailsService(customUserDetailsService)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Обработка сессий
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .maximumSessions(1)
-                        .expiredUrl("/login?expired=true") // Перенаправление при истечении сессии
+                        .expiredUrl("/login?expired=true")
                 );
         return http.build();
     }
-
 }
-

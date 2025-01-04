@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -29,5 +31,21 @@ public class CourseController {
 
         return "homepage";
     }
+
+    @GetMapping("/add-course")
+    public String showAddCourseForm(Model model) {
+        model.addAttribute("course", new Course());
+        return "add_course";
+    }
+
+    @PostMapping("/add-course")
+    public String addCourse(@ModelAttribute("course") Course course) {
+        System.out.println("Course title: " + course.getTitle());
+        System.out.println("Course description: " + course.getDescription());
+        courseRepository.save(course);
+        return "redirect:/homepage";
+    }
+
+
 }
 
