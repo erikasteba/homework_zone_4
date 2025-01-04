@@ -1,8 +1,10 @@
 package coursesit.services;
 
 
+import coursesit.Repositories.UserProfileRepository;
 import coursesit.Repositories.UserRepository;
 import coursesit.entities.User;
+import coursesit.entities.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +19,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
     public boolean isUsernameTaken(String username) {
         return userRepository.existsByUsername(username);
     }
@@ -25,9 +30,14 @@ public class UserService {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password)); // Шифруем пароль
-        user.setRole("simpleuser");
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole("ROLE_ADMIN");
         userRepository.save(user);
+
+        // Создаём профиль для пользователя
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUser(user);
+        userProfileRepository.save(userProfile);
     }
 
     public User getCurrentUser() {

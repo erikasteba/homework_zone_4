@@ -6,11 +6,16 @@ import lombok.Data;
 import java.util.List;
 @Data
 @Entity
+@Table(name = "user_profile") // Указываем явное имя таблицы
 public class UserProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    public List<Course> getCourses() {
+        return courses;
+    }
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -19,10 +24,6 @@ public class UserProfile {
     private String firstName;
     private String lastName;
 
-    public List<Course> getCourses() {
-        return courses;
-    }
-
     @ManyToMany
     @JoinTable(
             name = "user_courses",
@@ -30,5 +31,41 @@ public class UserProfile {
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     private List<Course> courses;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
 
 }

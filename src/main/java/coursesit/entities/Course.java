@@ -17,6 +17,16 @@ public class Course {
     @ManyToMany(mappedBy = "courses")
     private List<UserProfile> profiles;
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    @Column(columnDefinition = "TEXT")
+    private String content; // Материалы курса
     public Long getId() {
         return id;
     }

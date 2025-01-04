@@ -37,15 +37,20 @@
 </nav>
 
 <div class="container mt-5">
-  <h1 class="mb-4">Ваш Профиль</h1>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Информация о пользователе</h5>
-      <!-- <p class="card-text">Имя: <span th:text="${profile.firstName}">Имя</span></p>-->
-      <!-- <p class="card-text">Фамилия: <span th:text="${profile.lastName}">Фамилия</span></p> -->
-      <!--  <p class="card-text">О себе: <span th:text="${profile.bio}">Описание</span></p> -->
-     </div>
-   </div>
+    <h1>My Profile</h1>
+    <h2>My Courses</h2>
+    <ul class="list-group" th:if="${not #lists.isEmpty(userProfile.courses)}">
+        <li class="list-group-item" th:each="course : ${userProfile.courses}">
+            <h5 th:text="${course.title}">Course Title</h5>
+            <a th:href="@{/course/{id}(id=${course.id})}" class="btn btn-primary">View Course</a>
+        </li>
+    </ul>
+    <p class="text-muted" th:if="${#lists.isEmpty(userProfile.courses)}">
+        You haven't enrolled in any courses yet.
+    </p>
+
+</div>
+
 
    <h2 class="mt-5">Мои Курсы</h2>
    <ul class="list-group">
