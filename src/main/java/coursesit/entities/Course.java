@@ -3,6 +3,7 @@ package coursesit.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,8 +15,18 @@ public class Course {
 
     private String title;
     private String description;
-    @ManyToMany(mappedBy = "courses")
-    private List<UserProfile> profiles;
+    @ManyToMany(mappedBy = "courses", cascade = CascadeType.ALL)
+    private List<UserProfile> profiles = new ArrayList<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Topic> topics = new ArrayList<>();
+
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
+    }
 
     public void setContent(String content) {
         this.content = content;

@@ -1,10 +1,9 @@
 package coursesit.controllers;
 
 import coursesit.Repositories.CourseRepository;
+import coursesit.Repositories.TopicRepository;
 import coursesit.Repositories.UserProfileRepository;
-import coursesit.entities.Course;
-import coursesit.entities.User;
-import coursesit.entities.UserProfile;
+import coursesit.entities.*;
 import coursesit.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class CourseController {
 
@@ -22,9 +25,12 @@ public class CourseController {
 
     @Autowired
     private UserProfileRepository userProfileRepository;
+
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TopicRepository topicRepository;
 
     @GetMapping("/homepage")
     public String showHomepage(Model model, @RequestParam(defaultValue = "0") int page) {
@@ -44,19 +50,47 @@ public class CourseController {
         return "add_course";
     }
 
-
-    @Transactional
     @PostMapping("/add-course")
     public String addCourse(@RequestParam String title,
                             @RequestParam String description,
-                            @RequestParam String content) {
+                            @RequestParam(name = "topicsTitles", required = false) List<String> topicsTitles,
+                            @RequestParam(name = "topicsContents", required = false) List<String> topicsContents,
+                            @RequestParam(required = false) List<String> testQuestions,
+                            @RequestParam(required = false) List<String> testAnswers1,
+                            @RequestParam(required = false) List<String> testAnswers2,
+                            @RequestParam(required = false) List<String> testAnswers3,
+                            @RequestParam(required = false) List<Integer> correctAnswers) {
         Course course = new Course();
         course.setTitle(title);
         course.setDescription(description);
-        course.setContent(content);
-        courseRepository.save(course);
+
+        for (int i = 0; i < topicsTitles.size(); i++) {
+            Topic topic = new Topic();
+            topic.setTitle(topicsTitles.get(i));
+            topic.setContent(topicsContents.get(i));
+            topic.setCourse(course);
+            course.getTopics().add(topic);
+
+            // Добавление теста, если данные теста присутствуют
+            if (testQuestions != null && testQuestions.size() > i && !testQuestions.get(i).isEmpty()) {
+                Test test = new Test();
+                test.setQuestion(testQuestions.get(i));
+                test.setAnswer1(testAnswers1.get(i));
+                test.setAnswer2(testAnswers2.get(i));
+                test.setAnswer3(testAnswers3.get(i));
+                test.setCorrectAnswer(correctAnswers.get(i));
+                test.setTopic(topic);
+                topic.setTest(test);
+            }
+        }
+
+        courseRepository.save(course); // Сохраняем курс и связанные темы
         return "redirect:/homepage";
     }
+
+
+
+
 
 
     @GetMapping("/course/{id}")
@@ -64,6 +98,7 @@ public class CourseController {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
         model.addAttribute("course", course);
+        model.addAttribute("topics", course.getTopics()); // Передаем список тем
         return "course-details";
     }
 
@@ -93,20 +128,86 @@ public class CourseController {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
         model.addAttribute("course", course);
-        return "edit-course";
+        return "edit-course"; // Шаблон для редактирования курса и его тем
     }
 
     @PostMapping("/course/{id}/edit")
-    public String updateCourse(@PathVariable Long id, @ModelAttribute("course") Course updatedCourse) {
+    public String updateCourse(@PathVariable Long id,
+                               @RequestParam String title,
+                               @RequestParam String description,
+                               @RequestParam String content,
+                               @RequestParam List<Long> topicIds,
+                               @RequestParam List<String> topicsTitles,
+                               @RequestParam List<String> topicsContents,
+                               @RequestParam(required = false) List<Long> removedTopicIds) {
+        // Обработка курса и тем
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
 
-        course.setTitle(updatedCourse.getTitle());
-        course.setDescription(updatedCourse.getDescription());
-        course.setContent(updatedCourse.getContent());
+        // Удаление тем
+        if (removedTopicIds != null) {
+            removedTopicIds.forEach(topicRepository::deleteById);
+        }
+
+        // Обновление и добавление тем
+        for (int i = 0; i < topicIds.size(); i++) {
+            Long topicId = topicIds.get(i); // Сохраняем в локальной переменной
+            Topic topic = topicRepository.findById(topicId)
+                    .orElseThrow(() -> new RuntimeException("Topic not found with id: " + topicId));
+            topic.setTitle(topicsTitles.get(i));
+            topic.setContent(topicsContents.get(i));
+        }
+
+        for (int i = topicIds.size(); i < topicsTitles.size(); i++) {
+            Topic newTopic = new Topic();
+            newTopic.setTitle(topicsTitles.get(i));
+            newTopic.setContent(topicsContents.get(i));
+            newTopic.setCourse(course);
+            course.getTopics().add(newTopic);
+        }
+
+        course.setTitle(title);
+        course.setDescription(description);
+        course.setContent(content);
         courseRepository.save(course);
 
         return "redirect:/course/" + id;
+    }
+
+
+
+
+
+
+    @GetMapping("/course/{courseId}/topics")
+    public String showTopics(@PathVariable Long courseId, Model model) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
+
+        List<Topic> topics = topicRepository.findByCourseId(courseId);
+        model.addAttribute("course", course);
+        model.addAttribute("topics", topics);
+        return "topics"; // Шаблон для отображения тем курса
+    }
+
+    @GetMapping("/course/{courseId}/topic/{topicId}")
+    public String showTopic(@PathVariable Long courseId, @PathVariable Long topicId, Model model) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new RuntimeException("Topic not found with id: " + topicId));
+
+        model.addAttribute("course", course);
+        model.addAttribute("topics", course.getTopics());
+        model.addAttribute("topic", topic);
+        return "topic"; // Шаблон для отображения конкретной темы
+    }
+
+
+    @PostMapping("/course/{id}/delete")
+    public String deleteCourse(@PathVariable Long id) {
+        courseRepository.deleteById(id);
+        return "redirect:/homepage";
     }
 
 }
