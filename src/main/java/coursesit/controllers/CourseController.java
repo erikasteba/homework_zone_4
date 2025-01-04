@@ -139,8 +139,13 @@ public class CourseController {
                                @RequestParam List<Long> topicIds,
                                @RequestParam List<String> topicsTitles,
                                @RequestParam List<String> topicsContents,
+                               @RequestParam(required = false) List<String> testQuestions,
+                               @RequestParam(required = false) List<String> testAnswer1s,
+                               @RequestParam(required = false) List<String> testAnswer2s,
+                               @RequestParam(required = false) List<String> testAnswer3s,
+                               @RequestParam(required = false) List<Integer> testCorrectAnswers,
                                @RequestParam(required = false) List<Long> removedTopicIds) {
-        // Обработка курса и тем
+        // Логика обновления курса и тестов
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
 
@@ -149,22 +154,27 @@ public class CourseController {
             removedTopicIds.forEach(topicRepository::deleteById);
         }
 
-        // Обновление и добавление тем
+        // Обновление существующих тем и тестов
         for (int i = 0; i < topicIds.size(); i++) {
-            Long topicId = topicIds.get(i); // Сохраняем в локальной переменной
+            Long topicId = topicIds.get(i); // Сохраняем значение в локальной переменной
             Topic topic = topicRepository.findById(topicId)
                     .orElseThrow(() -> new RuntimeException("Topic not found with id: " + topicId));
+
             topic.setTitle(topicsTitles.get(i));
             topic.setContent(topicsContents.get(i));
+
+            if (testQuestions != null && i < testQuestions.size()) {
+                Test test = topic.getTest();
+                if (test != null) {
+                    test.setQuestion(testQuestions.get(i));
+                    test.setAnswer1(testAnswer1s.get(i));
+                    test.setAnswer2(testAnswer2s.get(i));
+                    test.setAnswer3(testAnswer3s.get(i));
+                    test.setCorrectAnswer(testCorrectAnswers.get(i));
+                }
+            }
         }
 
-        for (int i = topicIds.size(); i < topicsTitles.size(); i++) {
-            Topic newTopic = new Topic();
-            newTopic.setTitle(topicsTitles.get(i));
-            newTopic.setContent(topicsContents.get(i));
-            newTopic.setCourse(course);
-            course.getTopics().add(newTopic);
-        }
 
         course.setTitle(title);
         course.setDescription(description);
@@ -173,6 +183,7 @@ public class CourseController {
 
         return "redirect:/course/" + id;
     }
+
 
 
 
