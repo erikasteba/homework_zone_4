@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/homepage">Home</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <!-- Кнопка регистрации, отображается только если пользователь не вошел в систему -->
+        <li class="nav-item" th:if="${#authentication == null}">
+          <a class="nav-link" href="/register">Register</a>
+        </li>
+        <!-- Кнопка входа, отображается только если пользователь не вошел в систему -->
+        <li class="nav-item" th:if="${#authentication == null}">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+        <!-- Кнопка выхода, отображается только если пользователь вошел в систему -->
+        <li class="nav-item" th:if="${#authentication != null}">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+        <!-- Кнопка профиля, отображается только если пользователь вошел в систему -->
+        <li class="nav-item" th:if="${#authentication != null}">
+          <a class="nav-link" href="/profile">Profile</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <h2>Register</h2>
+  <form action="/register" method="post">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</div>
+</body>
+</html>

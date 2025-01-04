@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/homepage">Home</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <!-- Кнопка регистрации, отображается только если пользователь не вошел в систему -->
+        <li class="nav-item" th:if="${#authentication == null}">
+          <a class="nav-link" href="/register">Register</a>
+        </li>
+        <!-- Кнопка входа, отображается только если пользователь не вошел в систему -->
+        <li class="nav-item" th:if="${#authentication == null}">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+        <!-- Кнопка выхода, отображается только если пользователь вошел в систему -->
+        <li class="nav-item" th:if="${#authentication != null}">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+        <!-- Кнопка профиля, отображается только если пользователь вошел в систему -->
+        <li class="nav-item" th:if="${#authentication != null}">
+          <a class="nav-link" href="/profile">Profile</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container mt-5">
+  <h1>Welcome to the Homepage!</h1>
+  <p>This is the main page after login.</p>
+
+  <h2>Courses</h2>
+  <div class="list-group mt-3">
+    <!-- Отображаем курсы -->
+    <div class="list-group-item" th:each="course : ${courses}">
+      <h5 class="mb-1" th:text="${course.title}">Course Title</h5>
+      <p class="mb-1" th:text="${course.description}">Course Description</p>
+      <small th:text="'Instructor: ' + ${course.instructor}">Instructor</small>
+    </div>
+  </div>
+
+  <!-- Пагинация -->
+  <div class="mt-3">
+    <ul class="pagination">
+      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+        <a class="page-link" href="?page=0">First</a>
+      </li>
+      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+        <a class="page-link" href="?page=${currentPage - 1}">Previous</a>
+      </li>
+      <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+        <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+      </li>
+      <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+        <a class="page-link" href="?page=${totalPages - 1}">Last</a>
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
