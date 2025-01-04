@@ -34,7 +34,7 @@ public class CourseController {
 
     @GetMapping("/homepage")
     public String showHomepage(Model model, @RequestParam(defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page, 5); // 5 курсов на странице
+        Pageable pageable = PageRequest.of(page, 3); // 3 курсов на странице
         Page<Course> coursePage = courseRepository.findAll(pageable);
 
         model.addAttribute("courses", coursePage.getContent());
@@ -98,9 +98,17 @@ public class CourseController {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
         model.addAttribute("course", course);
-        model.addAttribute("topics", course.getTopics()); // Передаем список тем
+        model.addAttribute("topics", course.getTopics());
+
+        User currentUser = userService.getCurrentUser();
+        boolean hasAccess = userProfileRepository.findByUser(currentUser)
+                .map(profile -> profile.getCourses().contains(course))
+                .orElse(false);
+        model.addAttribute("hasAccess", hasAccess);
+
         return "course-details";
     }
+
 
 
 

@@ -45,8 +45,13 @@
     <div class="col-md-3">
       <h4>Topics</h4>
       <ul class="list-group">
+        <li class="list-group-item">
+          <a th:href="@{/course/{courseId}(courseId=${course.id})}"
+             th:text="Beginning">Beginning</a>
+        </li>
         <li class="list-group-item" th:each="topic : ${topics}">
-          <a th:href="@{/course/{courseId}/topic/{topicId}(courseId=${course.id}, topicId=${topic.id})}" th:text="${topic.title}">Topic Title</a>
+          <a th:href="@{/course/{courseId}/topic/{topicId}(courseId=${course.id}, topicId=${topic.id})}"
+             th:text="${topic.title}">Topic Title</a>
         </li>
       </ul>
     </div>

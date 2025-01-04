@@ -22,9 +22,22 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam String username, @RequestParam String email, @RequestParam String password, Model model) {
-        if (userService.isUsernameTaken(username)) {
-            model.addAttribute("error", "Username is already taken");
+    public String registerUser(@RequestParam String username,
+                               @RequestParam String email,
+                               @RequestParam String password,
+                               Model model) {
+        boolean isUsernameTaken = userService.isUsernameTaken(username);
+        boolean isEmailTaken = userService.isEmailTaken(email);
+
+        if (isUsernameTaken) {
+            model.addAttribute("usernameError", "Username is already taken");
+        }
+
+        if (isEmailTaken) {
+            model.addAttribute("emailError", "Email is already used");
+        }
+
+        if (isUsernameTaken || isEmailTaken) {
             return "register";
         }
 
@@ -32,13 +45,14 @@ public class AuthController {
         return "redirect:/login";
     }
 
+
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String showLoginForm(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("error", "Invalid username or password");
+        }
         return "login";
     }
 
-    //@GetMapping("/homepage")
-    //public String showHomepage() {
-    //    return "homepage"; // Убедитесь, что существует шаблон homepage.html
-    //}
+
 }

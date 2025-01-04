@@ -51,4 +51,9 @@ public class UserService {
             throw new RuntimeException("Authentication principal is not of type UserDetails");
         }
     }
+
+    public boolean isEmailTaken(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
 }
