@@ -11,18 +11,14 @@ public class UserController {
 
     @GetMapping("/profile")
     public String showProfile(Model model) {
-        // Получаем информацию о текущем аутентифицированном пользователе
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();  // Имя пользователя
-            model.addAttribute("username", username);  // Добавляем имя пользователя в модель
+            String username = authentication.getName();
+            model.addAttribute("username", username);
         } else {
-            // Если пользователь не аутентифицирован, перенаправляем на страницу логина
             return "redirect:/login";
         }
 
-        // Возвращаем страницу профиля
         return "profile";
     }
 }

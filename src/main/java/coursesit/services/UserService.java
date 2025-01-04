@@ -4,6 +4,7 @@ package coursesit.services;
 import coursesit.Repositories.UserRepository;
 import coursesit.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +28,17 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(password)); // Шифруем пароль
         user.setRole("simpleuser");
         userRepository.save(user);
+    }
+
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+            String username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        } else {
+            throw new RuntimeException("Authentication principal is not of type UserDetails");
+        }
     }
 }

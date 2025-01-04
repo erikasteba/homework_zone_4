@@ -7,26 +7,19 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/homepage">Home</a>
-    <div class="collapse navbar-collapse">
+    <a class="navbar-brand" href="/homepage">IT Courses</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <!-- Кнопка регистрации, отображается только если пользователь не вошел в систему -->
-        <li class="nav-item" th:if="${#authentication == null}">
-          <a class="nav-link" href="/register">Register</a>
-        </li>
-        <!-- Кнопка входа, отображается только если пользователь не вошел в систему -->
-        <li class="nav-item" th:if="${#authentication == null}">
-          <a class="nav-link" href="/login">Login</a>
-        </li>
-        <!-- Кнопка выхода, отображается только если пользователь вошел в систему -->
-        <li class="nav-item" th:if="${#authentication != null}">
-          <a class="nav-link" href="/logout">Logout</a>
-        </li>
-        <!-- Кнопка профиля, отображается только если пользователь вошел в систему -->
-        <li class="nav-item" th:if="${#authentication != null}">
+        <li class="nav-item">
           <a class="nav-link" href="/profile">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
         </li>
       </ul>
     </div>

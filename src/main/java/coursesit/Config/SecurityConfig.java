@@ -31,7 +31,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/homepage", true) // Перенаправление на /homepage после успешного логина
+                        .defaultSuccessUrl("/profile", true)// Перенаправление на /homepage после успешного логина
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -39,12 +39,12 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login")
                         .permitAll()
                 )
-                .userDetailsService(customUserDetailsService)
+                .userDetailsService(customUserDetailsService) // Настройка кастомного UserDetailsService
                 .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)  // Обработка сессий (по умолчанию)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Обработка сессий
                         .maximumSessions(1)
-                        .expiredUrl("/login?expired=true")  // Перенаправление на страницу логина при невалидной сессии
-        );
+                        .expiredUrl("/login?expired=true") // Перенаправление при истечении сессии
+                );
         return http.build();
     }
 
