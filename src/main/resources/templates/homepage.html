@@ -38,7 +38,7 @@
 
 <div class="container mt-5">
   <h1>Welcome to the Homepage!</h1>
-  <p>This is the main page after login.</p>
+  <p>Here is the list of courses we have:</p>
 
   <h2>Courses</h2>
   <div class="list-group mt-3">
@@ -46,10 +46,10 @@
       <h5 class="mb-1" th:text="${course.title}">Course Title</h5>
       <p class="mb-1" th:text="${course.description}">Course Description</p>
       <a th:href="@{/course/{id}(id=${course.id})}" class="btn btn-primary">View Details</a>
-      <a th:href="@{/course/{id}/edit(id=${course.id})}" class="btn btn-warning" sec:authorize="hasRole('ADMIN')">Edit</a>
+      <a th:href="@{/course/{id}/edit(id=${course.id})}" class="btn btn-warning" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
       <!-- admin can remove course -->
       <form th:action="@{/course/{id}/delete(id=${course.id})}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this course?');">
-        <button type="submit" class="btn btn-danger" sec:authorize="hasRole('ADMIN')">Delete</button>
+        <button type="submit" class="btn btn-danger" sec:authorize="hasRole('ROLE_ADMIN')">Delete</button>
       </form>
     </div>
   </div>

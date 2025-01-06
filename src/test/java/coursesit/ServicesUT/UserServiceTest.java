@@ -71,7 +71,7 @@ class UserServiceTest {
             return savedUser;
         });
 
-        userService.registerUser("testuser", "testuser@example.com", "password");
+        userService.registerUser("testuser", "testuser@gmail.com", "password");
 
         verify(userRepository, times(1)).save(any(User.class));
         verify(userProfileRepository, times(1)).save(any(UserProfile.class));
@@ -107,19 +107,19 @@ class UserServiceTest {
         Authentication mockAuthentication = mock(Authentication.class);
         UserDetails mockUserDetails = mock(UserDetails.class);
 
-        when(mockUserDetails.getUsername()).thenReturn("nonexistentuser");
+        when(mockUserDetails.getUsername()).thenReturn("user5");
 
         when(mockAuthentication.getPrincipal()).thenReturn(mockUserDetails);
 
         when(securityContext.getAuthentication()).thenReturn(mockAuthentication);
         SecurityContextHolder.setContext(securityContext);
 
-        when(userRepository.findByUsername("nonexistentuser")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername("user5")).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.getCurrentUser());
 
-        assertEquals("User not found: nonexistentuser", exception.getMessage());
-        verify(userRepository, times(1)).findByUsername("nonexistentuser");
+        assertEquals("User not found: user5", exception.getMessage());
+        verify(userRepository, times(1)).findByUsername("user5");
     }
 
 

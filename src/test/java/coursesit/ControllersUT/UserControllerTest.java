@@ -80,7 +80,7 @@ class UserControllerTest {
     @Test
     void testShowProfileWhenUserNotFound() {
 
-        String username = "nonexistent";
+        String username = "user5";
 
         // Настройка моков
         when(securityContext.getAuthentication()).thenReturn(authentication);

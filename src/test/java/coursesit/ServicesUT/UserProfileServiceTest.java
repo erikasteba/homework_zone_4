@@ -37,7 +37,6 @@ class UserProfileServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Создаем мокированные данные
         mockUser = new User();
         mockUser.setId(1L);
         mockUser.setUsername("testuser");

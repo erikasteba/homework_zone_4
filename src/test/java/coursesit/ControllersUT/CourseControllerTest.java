@@ -52,7 +52,7 @@ class CourseControllerTest {
 
     @Test
     void testShowHomepage() {
-        Page<Course> coursePage = new PageImpl<>(List.of()); // Пустой список курсов в Page
+        Page<Course> coursePage = new PageImpl<>(List.of()); // empty list on Page
         when(courseRepository.findAll(any(Pageable.class))).thenReturn(coursePage);
 
         String viewName = courseController.showHomepage(model, 0);
@@ -67,7 +67,7 @@ class CourseControllerTest {
     void testShowCourseDetails() {
         Course course = new Course();
         course.setId(1L);
-        course.setTitle("Sample Course");
+        course.setTitle("Course");
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 
         String viewName = courseController.showCourseDetails(1L, model);

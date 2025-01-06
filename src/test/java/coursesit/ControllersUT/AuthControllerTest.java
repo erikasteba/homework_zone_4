@@ -40,17 +40,17 @@ class AuthControllerTest {
     void testRegisterUserSuccess() {
         when(userService.isUsernameTaken("newuser")).thenReturn(false);
 
-        String viewName = authController.registerUser("newuser", "email@example.com", "password", model);
-        verify(userService).registerUser("newuser", "email@example.com", "password");
+        String viewName = authController.registerUser("user123", "user123@gmail.com", "password", model);
+        verify(userService).registerUser("user123", "user123@gmail.com", "password");
         assertEquals("redirect:/login", viewName);
     }
 
     @Test
     void testRegisterUserFailure() {
-        when(userService.isUsernameTaken("existinguser")).thenReturn(true);
+        when(userService.isUsernameTaken("user123")).thenReturn(true);
 
-        String viewName = authController.registerUser("existinguser", "email@example.com", "password", model);
-        verify(model).addAttribute("error", "Username is already taken");
+        String viewName = authController.registerUser("user123", "user123@gmail.com", "password", model);
+        verify(model).addAttribute("usernameError", "Username is already taken");
         assertEquals("register", viewName);
     }
 

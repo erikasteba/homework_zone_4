@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/login", "/css/**", "/js/**", "/homepage").permitAll()
                         .requestMatchers("/add-course").hasRole("ADMIN") //only admin can access /add-course
+                        .requestMatchers("/course/*/edit", "/course/*/delete").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
