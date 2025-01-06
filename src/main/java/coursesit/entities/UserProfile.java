@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 @Data
 @Entity
-@Table(name = "user_profile") // Указываем явное имя таблицы
+@Table(name = "user_profile")
 public class UserProfile {
 
     @Id
@@ -19,9 +19,10 @@ public class UserProfile {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Связь с сущностью User
+    private User user;
 
     private String firstName;
+
     private String lastName;
 
     @ManyToMany

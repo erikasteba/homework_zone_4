@@ -48,7 +48,7 @@ class UserControllerTest {
 
     @Test
     void testShowProfileWithAuthenticatedUser() {
-        // Подготовка данных
+        // test data
         String username = "admin";
         Long userId = 1L;
         User user = new User();
@@ -59,7 +59,7 @@ class UserControllerTest {
         userProfile.setId(1L);
         userProfile.setUser(user);
 
-        // Настройка моков
+
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getName()).thenReturn(username);
@@ -68,10 +68,10 @@ class UserControllerTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(userProfileRepository.findByUser_Id(userId)).thenReturn(Optional.of(userProfile));
 
-        // Вызов тестируемого метода
+        // calling method
         String viewName = userController.showProfile(model);
 
-        // Проверка
+        // checks
         assertEquals("profile", viewName);
         verify(model).addAttribute("userProfile", userProfile);
         verify(model).addAttribute("username", username);
@@ -79,7 +79,7 @@ class UserControllerTest {
 
     @Test
     void testShowProfileWhenUserNotFound() {
-        // Подготовка данных
+
         String username = "nonexistent";
 
         // Настройка моков
@@ -90,7 +90,6 @@ class UserControllerTest {
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        // Проверка исключения
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userController.showProfile(model);
         });
@@ -100,14 +99,14 @@ class UserControllerTest {
 
     @Test
     void testShowProfileWhenProfileNotFound() {
-        // Подготовка данных
+
         String username = "admin";
         Long userId = 1L;
         User user = new User();
         user.setId(userId);
         user.setUsername(username);
 
-        // Настройка моков
+
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getName()).thenReturn(username);
@@ -116,7 +115,7 @@ class UserControllerTest {
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(userProfileRepository.findByUser_Id(userId)).thenReturn(Optional.empty());
 
-        // Проверка исключения
+
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userController.showProfile(model);
         });
@@ -126,15 +125,13 @@ class UserControllerTest {
 
     @Test
     void testShowProfileWhenNotAuthenticated() {
-        // Настройка моков
+
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.isAuthenticated()).thenReturn(false);
         SecurityContextHolder.setContext(securityContext);
 
-        // Вызов тестируемого метода
         String viewName = userController.showProfile(model);
 
-        // Проверка
         assertEquals("redirect:/login", viewName);
     }
 }

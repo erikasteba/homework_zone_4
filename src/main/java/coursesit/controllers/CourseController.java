@@ -34,7 +34,7 @@ public class CourseController {
 
     @GetMapping("/homepage")
     public String showHomepage(Model model, @RequestParam(defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page, 3); // 3 курсов на странице
+        Pageable pageable = PageRequest.of(page, 3); // 3 courses are shown per page
         Page<Course> coursePage = courseRepository.findAll(pageable);
 
         model.addAttribute("courses", coursePage.getContent());
@@ -64,6 +64,7 @@ public class CourseController {
         course.setTitle(title);
         course.setDescription(description);
 
+        //adding topics to page
         for (int i = 0; i < topicsTitles.size(); i++) {
             Topic topic = new Topic();
             topic.setTitle(topicsTitles.get(i));
@@ -71,7 +72,7 @@ public class CourseController {
             topic.setCourse(course);
             course.getTopics().add(topic);
 
-            // Добавление теста, если данные теста присутствуют
+            // adding tests to page if there are any
             if (testQuestions != null && testQuestions.size() > i && !testQuestions.get(i).isEmpty()) {
                 Test test = new Test();
                 test.setQuestion(testQuestions.get(i));
@@ -84,13 +85,10 @@ public class CourseController {
             }
         }
 
-        courseRepository.save(course); // Сохраняем курс и связанные темы
+        courseRepository.save(course);
+        System.out.println("Test is successfully added to topic");
         return "redirect:/homepage";
     }
-
-
-
-
 
 
     @GetMapping("/course/{id}")
@@ -106,6 +104,7 @@ public class CourseController {
                 .orElse(false);
         model.addAttribute("hasAccess", hasAccess);
 
+        System.out.println("Course is successfully shown");
         return "course-details";
     }
 
@@ -122,12 +121,13 @@ public class CourseController {
         UserProfile userProfile = userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new RuntimeException("Profile not found for user: " + currentUser.getUsername()));
 
-        // Добавляем курс к профилю пользователя
+        // adding course to user`s profile
         if (!userProfile.getCourses().contains(course)) {
             userProfile.getCourses().add(course);
             userProfileRepository.save(userProfile);
         }
 
+        System.out.println("User successfully applied to course");
         return "redirect:/profile";
     }
 
@@ -136,7 +136,7 @@ public class CourseController {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
         model.addAttribute("course", course);
-        return "edit-course"; // Шаблон для редактирования курса и его тем
+        return "edit-course";
     }
 
     @PostMapping("/course/{id}/edit")
@@ -153,23 +153,23 @@ public class CourseController {
                                @RequestParam(required = false) List<String> testAnswer3s,
                                @RequestParam(required = false) List<Integer> testCorrectAnswers,
                                @RequestParam(required = false) List<Long> removedTopicIds) {
-        // Логика обновления курса и тестов
+
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
 
-        // Удаление тем
         if (removedTopicIds != null) {
             removedTopicIds.forEach(topicRepository::deleteById);
         }
 
-        // Обновление существующих тем и тестов
+        // editing topics
         for (int i = 0; i < topicIds.size(); i++) {
-            Long topicId = topicIds.get(i); // Сохраняем значение в локальной переменной
+            Long topicId = topicIds.get(i);
             Topic topic = topicRepository.findById(topicId)
                     .orElseThrow(() -> new RuntimeException("Topic not found with id: " + topicId));
 
             topic.setTitle(topicsTitles.get(i));
             topic.setContent(topicsContents.get(i));
+            System.out.println("Successfully edited topic information");
 
             if (testQuestions != null && i < testQuestions.size()) {
                 Test test = topic.getTest();
@@ -183,20 +183,14 @@ public class CourseController {
             }
         }
 
-
         course.setTitle(title);
         course.setDescription(description);
         course.setContent(content);
         courseRepository.save(course);
 
+        System.out.println("Successfully edited course information");
         return "redirect:/course/" + id;
     }
-
-
-
-
-
-
 
     @GetMapping("/course/{courseId}/topics")
     public String showTopics(@PathVariable Long courseId, Model model) {
@@ -206,7 +200,7 @@ public class CourseController {
         List<Topic> topics = topicRepository.findByCourseId(courseId);
         model.addAttribute("course", course);
         model.addAttribute("topics", topics);
-        return "topics"; // Шаблон для отображения тем курса
+        return "topics";
     }
 
     @GetMapping("/course/{courseId}/topic/{topicId}")
@@ -219,13 +213,17 @@ public class CourseController {
         model.addAttribute("course", course);
         model.addAttribute("topics", course.getTopics());
         model.addAttribute("topic", topic);
-        return "topic"; // Шаблон для отображения конкретной темы
+
+        System.out.println("Topic is successfully loaded");
+        return "topic";
     }
 
 
     @PostMapping("/course/{id}/delete")
     public String deleteCourse(@PathVariable Long id) {
         courseRepository.deleteById(id);
+
+        System.out.println("Course is successfully deleted");
         return "redirect:/homepage";
     }
 

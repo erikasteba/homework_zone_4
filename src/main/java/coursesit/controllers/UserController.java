@@ -25,13 +25,12 @@ public class UserController {
             String username = authentication.getName();
             System.out.println("Authenticated username: " + username);
 
-            // Получаем текущего пользователя
             User currentUser = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found: " + username));
             System.out.println("Current user: " + currentUser);
             System.out.println("Current user ID: " + currentUser.getId());
 
-            // Проверяем, находит ли метод findByUser_Id профиль
+            // checking if method finds user profile
             UserProfile userProfile = userProfileRepository.findByUser_Id(currentUser.getId())
                     .orElseThrow(() -> new RuntimeException("Profile not found for user: " + username));
             System.out.println("UserProfile: " + userProfile);
@@ -39,6 +38,7 @@ public class UserController {
             model.addAttribute("userProfile", userProfile);
             model.addAttribute("username", username);
         } else {
+            System.out.println("Profile couldn`t be loaded, try again.");
             return "redirect:/login";
         }
 

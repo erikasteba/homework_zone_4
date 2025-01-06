@@ -6,25 +6,29 @@ import lombok.Data;
 @Data
 @Entity
 public class Test {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String question; // Вопрос теста
+    private String question;
 
     @Column(nullable = false)
-    private String answer1; // Первый вариант ответа
+    private String answer1;
 
     @Column(nullable = false)
-    private String answer2; // Второй вариант ответа
+    private String answer2;
 
     @Column(nullable = false)
-    private String answer3; // Третий вариант ответа
+    private String answer3;
 
     @Column(nullable = false)
-    private Integer correctAnswer;  // 1, 2, или 3
+    private Integer correctAnswer;
 
+    @OneToOne
+    @JoinColumn(name = "topic_id", nullable = false)
+    private Topic topic;
     public Long getId() {
         return id;
     }
@@ -81,7 +85,5 @@ public class Test {
         this.topic = topic;
     }
 
-    @OneToOne
-    @JoinColumn(name = "topic_id", nullable = false)
-    private Topic topic;
+
 }

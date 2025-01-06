@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/login", "/css/**", "/js/**", "/homepage").permitAll()
-                        .requestMatchers("/add-course").hasRole("ADMIN") // Только для админов
+                        .requestMatchers("/add-course").hasRole("ADMIN") //only admin can access /add-course
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

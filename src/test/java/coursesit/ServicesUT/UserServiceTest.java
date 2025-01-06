@@ -47,7 +47,6 @@ class UserServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Создаем мокированные данные
         mockUser = new User();
         mockUser.setId(1L);
         mockUser.setUsername("testuser");
@@ -68,7 +67,7 @@ class UserServiceTest {
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User savedUser = invocation.getArgument(0);
-            savedUser.setId(1L); // Имитируем сохранение
+            savedUser.setId(1L);
             return savedUser;
         });
 
@@ -80,27 +79,21 @@ class UserServiceTest {
 
     @Test
     void testGetCurrentUserSuccess() {
-        // Мокаем Authentication
+
         Authentication mockAuthentication = mock(Authentication.class);
         UserDetails mockUserDetails = mock(UserDetails.class);
 
-        // Настраиваем поведение mockUserDetails
         when(mockUserDetails.getUsername()).thenReturn("testuser");
 
-        // Настраиваем поведение mockAuthentication
         when(mockAuthentication.getPrincipal()).thenReturn(mockUserDetails);
 
-        // Настраиваем SecurityContext
         when(securityContext.getAuthentication()).thenReturn(mockAuthentication);
         SecurityContextHolder.setContext(securityContext);
 
-        // Настраиваем userRepository
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(mockUser));
 
-        // Проверяем метод
         User currentUser = userService.getCurrentUser();
 
-        // Проверки
         assertNotNull(currentUser);
         assertEquals("testuser", currentUser.getUsername());
         verify(userRepository, times(1)).findByUsername("testuser");
@@ -110,24 +103,19 @@ class UserServiceTest {
 
     @Test
     void testGetCurrentUserNotFound() {
-        // Мокаем Authentication
+
         Authentication mockAuthentication = mock(Authentication.class);
         UserDetails mockUserDetails = mock(UserDetails.class);
 
-        // Настраиваем поведение mockUserDetails
         when(mockUserDetails.getUsername()).thenReturn("nonexistentuser");
 
-        // Настраиваем поведение mockAuthentication
         when(mockAuthentication.getPrincipal()).thenReturn(mockUserDetails);
 
-        // Настраиваем SecurityContext
         when(securityContext.getAuthentication()).thenReturn(mockAuthentication);
         SecurityContextHolder.setContext(securityContext);
 
-        // Настраиваем userRepository для возврата пустого результата
         when(userRepository.findByUsername("nonexistentuser")).thenReturn(Optional.empty());
 
-        // Проверяем, что выбрасывается исключение
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.getCurrentUser());
 
         assertEquals("User not found: nonexistentuser", exception.getMessage());
@@ -135,11 +123,10 @@ class UserServiceTest {
     }
 
 
-
     @Test
     void testGetCurrentUserInvalidPrincipal() {
         Authentication mockAuthentication = mock(Authentication.class);
-        when(mockAuthentication.getPrincipal()).thenReturn(new Object()); // Некорректный principal
+        when(mockAuthentication.getPrincipal()).thenReturn(new Object()); // principal is not correct
         when(securityContext.getAuthentication()).thenReturn(mockAuthentication);
         SecurityContextHolder.setContext(securityContext);
 

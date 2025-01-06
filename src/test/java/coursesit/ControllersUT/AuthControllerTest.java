@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class AuthControllerTest {
 
     @InjectMocks
-    private AuthController authController; // Автоматически внедряется мок userService
+    private AuthController authController;
 
     @Mock
     private UserService userService;
@@ -26,7 +26,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Инициализация аннотаций Mockito
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -56,16 +56,15 @@ class AuthControllerTest {
 
     @Test
     void testShowLoginFormWithError() {
-        // Создаем mock для Model
+
         Model model = mock(Model.class);
 
-        // Вызываем метод с параметром error
         String viewName = authController.showLoginForm("Invalid username or password", model);
 
-        // Проверяем, что viewName соответствует "login"
+        // checking that viewName is same as "login"
         assertEquals("login", viewName);
 
-        // Проверяем, что в модель добавляется атрибут error
+        // checking that atribute error is added to the model
         verify(model, times(1)).addAttribute("error", "Invalid username or password");
     }
 

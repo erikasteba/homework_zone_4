@@ -13,7 +13,7 @@ import java.util.Optional;
 public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
-    private final UserService userService; // Предполагается, что у вас уже есть UserService
+    private final UserService userService;
 
     public UserProfileService(UserProfileRepository userProfileRepository, UserService userService) {
         this.userProfileRepository = userProfileRepository;
@@ -21,7 +21,7 @@ public class UserProfileService {
     }
 
     public UserProfile getProfileForCurrentUser() {
-        User currentUser = userService.getCurrentUser(); // Получаем текущего пользователя
+        User currentUser = userService.getCurrentUser();
         return userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
     }

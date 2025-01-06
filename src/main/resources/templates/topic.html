@@ -60,7 +60,7 @@
       <h1 th:text="${topic.title}">Topic Title</h1>
       <p th:text="${topic.content}">Topic Content</p>
 
-      <!-- Тест -->
+      <!-- course test -->
       <div th:if="${topic.test != null}" id="testContainer" th:data-correct-answer="${topic.test.correctAnswer}">
         <h3 th:text="${topic.test.question}">Test Question</h3>
         <form id="testForm">

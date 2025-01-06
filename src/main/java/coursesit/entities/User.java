@@ -11,11 +11,13 @@ public class User {
     private Long id;
 
     private String username;
-    private String email;
-    private String password;
-    private String role = "simpleuser";
 
-    // Getters and Setters
+    private String email;
+
+    private String password;
+
+    private String role = "simpleuser"; //will be set by default
+
     public Long getId() {
         return id;
     }

@@ -49,9 +49,7 @@ class CourseControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    /**
-     * Тест отображения главной страницы с курсами.
-     */
+
     @Test
     void testShowHomepage() {
         Page<Course> coursePage = new PageImpl<>(List.of()); // Пустой список курсов в Page
@@ -65,10 +63,6 @@ class CourseControllerTest {
         assertEquals("homepage", viewName);
     }
 
-
-    /**
-     * Тест отображения деталей курса.
-     */
     @Test
     void testShowCourseDetails() {
         Course course = new Course();
@@ -81,9 +75,7 @@ class CourseControllerTest {
         assertEquals("course-details", viewName);
     }
 
-    /**
-     * Тест отображения деталей несуществующего курса.
-     */
+
     @Test
     void testShowCourseDetailsNotFound() {
         when(courseRepository.findById(1L)).thenReturn(Optional.empty());
@@ -95,9 +87,7 @@ class CourseControllerTest {
         }
     }
 
-    /**
-     * Тест успешного удаления курса.
-     */
+
     @Test
     void testDeleteCourse() {
         doNothing().when(courseRepository).deleteById(1L);
@@ -107,9 +97,8 @@ class CourseControllerTest {
         assertEquals("redirect:/homepage", viewName);
     }
 
-    /**
-     * Тест редактирования курса.
-     */
+
+
     @Test
     void testEditCourse() {
         Course course = new Course();

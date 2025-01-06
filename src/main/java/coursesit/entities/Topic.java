@@ -6,9 +6,11 @@ import lombok.Data;
 @Data
 @Entity
 public class Topic {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
@@ -18,6 +20,8 @@ public class Topic {
 
     @OneToOne(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Test test;
+
+    private String title;
 
     public Test getTest() {
         return test;
@@ -59,7 +63,7 @@ public class Topic {
         this.course = course;
     }
 
-    private String title;
+
 
 
 }

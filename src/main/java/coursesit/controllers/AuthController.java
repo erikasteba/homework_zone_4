@@ -38,10 +38,12 @@ public class AuthController {
         }
 
         if (isUsernameTaken || isEmailTaken) {
+            System.out.println("username and email are taken");
             return "register";
         }
 
         userService.registerUser(username, email, password);
+        System.out.println("User is successfully registered");
         return "redirect:/login";
     }
 
@@ -51,6 +53,7 @@ public class AuthController {
         if (error != null) {
             model.addAttribute("error", "Invalid username or password");
         }
+        System.out.println("User is successfully logged in");
         return "login";
     }
 

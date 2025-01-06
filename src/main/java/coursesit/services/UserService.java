@@ -34,7 +34,7 @@ public class UserService {
         user.setRole("simpleuser");
         userRepository.save(user);
 
-        // Создаём профиль для пользователя
+        // creating profile for user
         UserProfile userProfile = new UserProfile();
         userProfile.setUser(user);
         userProfileRepository.save(userProfile);

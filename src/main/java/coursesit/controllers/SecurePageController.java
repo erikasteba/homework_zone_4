@@ -11,17 +11,16 @@ public class SecurePageController {
 
     @GetMapping("/myPage")
     public String showPage(Model model) {
-        // Получаем информацию о текущем пользователе
+        // checking if user is authenticated
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();  // Имя пользователя
+            String username = authentication.getName();
             model.addAttribute("username", username);
         } else {
-            return "redirect:/login";  // Перенаправляем на страницу логина, если пользователь не аутентифицирован
+            return "redirect:/login";
         }
 
-        // Возвращаем защищенную страницу
         return "myPage";
     }
 }

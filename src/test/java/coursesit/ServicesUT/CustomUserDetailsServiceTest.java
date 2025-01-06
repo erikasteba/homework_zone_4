@@ -31,7 +31,7 @@ class CustomUserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsernameSuccess() {
-        // Подготовка данных
+
         User mockUser = new User();
         mockUser.setUsername("admin");
         mockUser.setPassword("password123");
@@ -39,10 +39,8 @@ class CustomUserDetailsServiceTest {
 
         when(userRepository.findByUsername("admin")).thenReturn(Optional.of(mockUser));
 
-        // Вызов тестируемого метода
         UserDetails userDetails = customUserDetailsService.loadUserByUsername("admin");
 
-        // Проверка
         assertNotNull(userDetails);
         assertEquals("admin", userDetails.getUsername());
         assertEquals("password123", userDetails.getPassword());
@@ -54,10 +52,9 @@ class CustomUserDetailsServiceTest {
 
     @Test
     void testLoadUserByUsernameNotFound() {
-        // Подготовка данных
+
         when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
 
-        // Вызов тестируемого метода и проверка исключения
         UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () ->
                 customUserDetailsService.loadUserByUsername("unknown"));
 
