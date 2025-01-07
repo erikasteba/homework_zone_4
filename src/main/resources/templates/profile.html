@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Профиль</title>
+  <title>Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="/homepage">IT Courses</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -37,13 +38,21 @@
 </nav>
 
 <div class="container mt-5">
-    <h1>My Profile</h1>
+    <h1>My Profile:
+        <p th:text="${username}">
+        You haven't enrolled in any courses yet.
+    </p>
+    </h1>
     <h2>My Courses:</h2>
     <ul class="list-group" th:if="${not #lists.isEmpty(userProfile.courses)}">
         <li class="list-group-item" th:each="course : ${userProfile.courses}">
             <h5 th:text="${course.title}">Course Title</h5>
             <a th:href="@{/course/{id}(id=${course.id})}" class="btn btn-primary">View Course</a>
-        </li>
+            <form th:action="@{/course/{id}/unsubscribe(id=${course.id})}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" class="btn btn-danger">Remove course</button>
+            </form>
+       </li>
     </ul>
     <p class="text-muted" th:if="${#lists.isEmpty(userProfile.courses)}">
         You haven't enrolled in any courses yet.

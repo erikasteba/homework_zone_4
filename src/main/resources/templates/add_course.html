@@ -13,11 +13,15 @@
       const topicTemplate = `
         <div class="topic-item mb-4">
           <div class="mb-3">
-              <label for="topics[${topicIndex}].title" class="form-label">Topic Title</label>
+              <label for="topics[${topicIndex}].title" class="form-label">
+              Topic Title
+              </label>
               <input type="text" class="form-control" name="topicsTitles" required>
           </div>
           <div class="mb-3">
-              <label for="topics[${topicIndex}].content" class="form-label">Topic Content</label>
+              <label for="topics[${topicIndex}].content" class="form-label">
+              Topic Content
+              </label>
               <textarea class="form-control" name="topicsContents" rows="5" required></textarea>
           </div>
 
@@ -25,7 +29,9 @@
           <div class="test-section">
             <h5>Test (optional)</h5>
             <div class="mb-3">
-              <label for="topics[${topicIndex}].question" class="form-label">Question</label>
+              <label for="topics[${topicIndex}].question" class="form-label">
+              Question
+              </label>
               <input type="text" class="form-control" name="testQuestions">
             </div>
             <div class="mb-3">
@@ -35,7 +41,9 @@
               <input type="text" class="form-control mb-2" placeholder="Answer 3" name="testAnswers3">
             </div>
             <div class="mb-3">
-              <label class="form-label">Correct Answer</label>
+              <label class="form-label">
+              Correct Answer
+              </label>
               <select class="form-control" name="correctAnswers">
                 <option value="1">Answer 1</option>
                 <option value="2">Answer 2</option>
@@ -44,7 +52,9 @@
             </div>
           </div>
 
-          <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeTopic(this)">Remove Topic</button>
+          <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeTopic(this)">
+          Remove Topic
+          </button>
         </div>
       `;
       const topicDiv = document.createElement('div');
@@ -61,7 +71,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/homepage">IT Courses</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -89,24 +101,53 @@
 
 <div class="container mt-5">
   <h1>Create Course</h1>
-  <form action="/add-course" method="post">
+  <form id="courseForm" action="/add-course" method="post" onsubmit="return validateForm()">
     <div class="mb-3">
-      <label for="title" class="form-label">Course Title</label>
+      <label for="title" class="form-label">
+        Course Title
+      </label>
       <input type="text" class="form-control" id="title" name="title" required>
     </div>
     <div class="mb-3">
-      <label for="description" class="form-label">Course Description</label>
+      <label for="description" class="form-label">
+        Course Description
+      </label>
       <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
     </div>
 
     <h3>Topics</h3>
     <div id="topicsContainer"></div>
-    <button type="button" class="btn btn-secondary" onclick="addTopic()">Add Topic</button>
-    <button type="submit" class="btn btn-primary mt-3">Create Course</button>
+    <p id="errorMessage" class="text-danger" style="display: none;">
+      Add at least 1 topic!
+    </p>
+    <button type="button" class="btn btn-secondary" onclick="addTopic()">
+      Add Topic
+    </button>
+    <button type="submit" class="btn btn-primary mt-3">
+      Create Course
+    </button>
   </form>
 </div>
 
+<script>
+  function validateForm() {
+    const topicsContainer = document.getElementById('topicsContainer');
+    const errorMessage = document.getElementById('errorMessage');
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    if (topicsContainer.children.length === 0) {
+      errorMessage.style.display = 'block';
+      return false;
+    }
+
+    errorMessage.style.display = 'none';
+    return true;
+  }
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+
+</script>
 </body>
 </html>

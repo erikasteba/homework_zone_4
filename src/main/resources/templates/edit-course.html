@@ -13,14 +13,20 @@
       const topicTemplate = `
         <div class="topic-item mb-4">
           <div class="mb-3">
-              <label for="topics[${topicIndex}].title" class="form-label">Topic Title</label>
+              <label for="topics[${topicIndex}].title" class="form-label">
+              Topic Title
+              </label>
               <input type="text" class="form-control" name="topicsTitles" required>
           </div>
           <div class="mb-3">
-              <label for="topics[${topicIndex}].content" class="form-label">Topic Content</label>
+              <label for="topics[${topicIndex}].content" class="form-label">
+              Topic Content
+              </label>
               <textarea class="form-control" name="topicsContents" rows="5" required></textarea>
           </div>
-          <button type="button" class="btn btn-danger btn-sm" onclick="removeTopic(this)">Remove Topic</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="removeTopic(this)">
+          Remove Topic
+          </button>
         </div>
       `;
       const topicDiv = document.createElement('div');
@@ -48,7 +54,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/homepage">IT Courses</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -83,11 +90,17 @@
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Course Description</label>
-      <textarea class="form-control" id="description" name="description" rows="3" th:text="${course.description}" required></textarea>
+      <textarea class="form-control" id="description"
+                name="description" rows="3" th:text="${course.description}" required>
+
+      </textarea>
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">Course Content</label>
-      <textarea class="form-control" id="content" name="content" rows="5" th:text="${course.content}" required></textarea>
+      <textarea class="form-control" id="content"
+                name="content" rows="5" th:text="${course.content}" required>
+
+      </textarea>
     </div>
 
     <h3>Topics</h3>
@@ -124,14 +137,19 @@
           </div>
           <div class="mb-3">
             <label for="correctAnswer" class="form-label">Correct Answer (1, 2, or 3)</label>
-            <input type="number" class="form-control" name="testCorrectAnswers" th:value="${topic.test.correctAnswer}" min="1" max="3">
+            <input type="number" class="form-control" name="testCorrectAnswers"
+                   th:value="${topic.test.correctAnswer}" min="1" max="3">
           </div>
         </div>
       </div>
     </div>
 
-    <button type="button" class="btn btn-secondary mb-3" onclick="addTopic()">Add Topic</button>
-    <button type="submit" class="btn btn-primary">Update Course</button>
+    <button type="button" class="btn btn-secondary mb-3" onclick="addTopic()">
+      Add Topic
+    </button>
+    <button type="submit" class="btn btn-primary">
+      Update Course
+    </button>
   </form>
 </div>
 

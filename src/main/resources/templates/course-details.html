@@ -10,7 +10,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/homepage">IT Courses</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -58,12 +59,19 @@
       <h1 th:text="${course.title}">Course Title</h1>
       <p th:text="${course.description}">Course Description</p>
 
-      <h3>Apply to coursee, pick topic and start learning!</h3>
+      <h3  th:if="${!hasAccess}">Apply to coursee, pick topic and start learning!</h3>
+      <h3  th:if="${hasAccess}" th:color="green">You are applied to course!</h3>
+      <form  th:if="${hasAccess}" th:action="@{/course/{id}/unsubscribe(id=${course.id})}" method="post">
+        <input type="hidden" name="_method" value="delete"/>
+        <button type="submit" class="btn btn-danger">Remove course</button>
+      </form>
       <p th:text="${course.content}">Course Materials</p>
 
       <!-- adds course to user profile -->
       <form th:action="@{/course/{id}/apply(id=${course.id})}" method="post" th:if="${!hasAccess}">
-        <button type="submit" class="btn btn-success">Apply to Course</button>
+        <button type="submit" class="btn btn-success">
+          Apply to Course
+        </button>
       </form>
     </div>
   </div>

@@ -51,20 +51,41 @@ public class CourseController {
     }
 
     @PostMapping("/add-course")
-    public String addCourse(@RequestParam String title,
-                            @RequestParam String description,
-                            @RequestParam(name = "topicsTitles", required = false) List<String> topicsTitles,
-                            @RequestParam(name = "topicsContents", required = false) List<String> topicsContents,
-                            @RequestParam(required = false) List<String> testQuestions,
-                            @RequestParam(required = false) List<String> testAnswers1,
-                            @RequestParam(required = false) List<String> testAnswers2,
-                            @RequestParam(required = false) List<String> testAnswers3,
-                            @RequestParam(required = false) List<Integer> correctAnswers) {
+    public String addCourse(
+            @RequestParam String title,
+            @RequestParam String description,
+            @RequestParam(name = "topicsTitles", required = false) List<String> topicsTitles,
+            @RequestParam(name = "topicsContents", required = false) List<String> topicsContents,
+            @RequestParam(required = false) List<String> testQuestions,
+            @RequestParam(required = false) List<String> testAnswers1,
+            @RequestParam(required = false) List<String> testAnswers2,
+            @RequestParam(required = false) List<String> testAnswers3,
+            @RequestParam(required = false) List<Integer> correctAnswers,
+            Model model) {
+
+        // check if there are topics
+        if (topicsTitles == null || topicsContents == null
+                || topicsTitles.isEmpty() || topicsContents.isEmpty()) {
+            model.addAttribute("errorMessage", "Add at least 1 topic with content!");
+            model.addAttribute("title", title);
+            model.addAttribute("description", description);
+            return "add_course";
+        }
+
+        // check topics are valid
+        for (int i = 0; i < topicsTitles.size(); i++) {
+            if (topicsTitles.get(i).isEmpty() || topicsContents.get(i).isEmpty()) {
+                model.addAttribute("errorMessage", "Each topic must have a title and content!");
+                model.addAttribute("title", title);
+                model.addAttribute("description", description);
+                return "add_course";
+            }
+        }
+
         Course course = new Course();
         course.setTitle(title);
         course.setDescription(description);
 
-        //adding topics to page
         for (int i = 0; i < topicsTitles.size(); i++) {
             Topic topic = new Topic();
             topic.setTitle(topicsTitles.get(i));
@@ -72,8 +93,9 @@ public class CourseController {
             topic.setCourse(course);
             course.getTopics().add(topic);
 
-            // adding tests to page if there are any
-            if (testQuestions != null && testQuestions.size() > i && !testQuestions.get(i).isEmpty()) {
+            // adding tests
+            if (testQuestions != null && testQuestions.size() > i
+                    && !testQuestions.get(i).isEmpty()) {
                 Test test = new Test();
                 test.setQuestion(testQuestions.get(i));
                 test.setAnswer1(testAnswers1.get(i));
@@ -86,9 +108,10 @@ public class CourseController {
         }
 
         courseRepository.save(course);
-        System.out.println("Test is successfully added to topic");
+        System.out.println("Course and topics successfully added.");
         return "redirect:/homepage";
     }
+
 
 
     @GetMapping("/course/{id}")
@@ -130,6 +153,28 @@ public class CourseController {
         System.out.println("User successfully applied to course");
         return "redirect:/profile";
     }
+
+    @Transactional
+    @DeleteMapping("/course/{id}/unsubscribe")
+    public String unsubscribeFromCourse(@PathVariable Long id) {
+        User currentUser = userService.getCurrentUser();
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+
+        UserProfile userProfile = userProfileRepository.findByUser(currentUser)
+                .orElseThrow(() -> new RuntimeException("Profile not found for user: " + currentUser.getUsername()));
+
+        if (userProfile.getCourses().contains(course)) {
+            userProfile.getCourses().remove(course);
+            System.out.println("Removed user`s courses");
+            userProfileRepository.save(userProfile);
+            System.out.println("Updated user`s courses");
+        }
+
+        System.out.println("User successfully unsubscribed from course");
+        return "redirect:/profile";
+    }
+
 
     @GetMapping("/course/{id}/edit")
     public String showEditCourseForm(@PathVariable Long id, Model model) {

@@ -7,9 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class SecurePageController {
+public class testPage {
 
-    @GetMapping("/myPage")
+    @GetMapping("/testPage")
     public String showPage(Model model) {
         // checking if user is authenticated
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -21,7 +21,7 @@ public class SecurePageController {
             return "redirect:/login";
         }
 
-        return "myPage";
+        return "test-page";
     }
 }
 
