@@ -2,7 +2,8 @@ package coursesit.controllers;
 
 import coursesit.services.UserService;
 import coursesit.entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +13,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
+
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -38,12 +44,12 @@ public class AuthController {
         }
 
         if (isUsernameTaken || isEmailTaken) {
-            System.out.println("username and email are taken");
+            logger.info("username and email are taken");
             return "register";
         }
 
         userService.registerUser(username, email, password);
-        System.out.println("User is successfully registered");
+        logger.info("User is successfully registered");
         return "redirect:/login";
     }
 
@@ -53,7 +59,7 @@ public class AuthController {
         if (error != null) {
             model.addAttribute("error", "Invalid username or password");
         }
-        System.out.println("User is successfully logged in");
+        logger.info("User is successfully logged in");
         return "login";
     }
 

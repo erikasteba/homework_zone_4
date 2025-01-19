@@ -1,4 +1,4 @@
-package coursesit.Repositories;
+package coursesit.repositories;
 
 import coursesit.entities.Course;
 import org.springframework.data.jpa.repository.JpaRepository;

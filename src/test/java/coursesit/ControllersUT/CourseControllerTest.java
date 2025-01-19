@@ -1,11 +1,10 @@
 package coursesit.ControllersUT;
 
-import coursesit.Repositories.CourseRepository;
-import coursesit.Repositories.TopicRepository;
-import coursesit.Repositories.UserProfileRepository;
+import coursesit.repositories.CourseRepository;
+import coursesit.repositories.TopicRepository;
+import coursesit.repositories.UserProfileRepository;
 import coursesit.controllers.CourseController;
 import coursesit.entities.Course;
-import coursesit.entities.Topic;
 import coursesit.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import org.springframework.ui.Model;
 
 import java.util.Optional;
 import java.util.List;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -57,9 +55,9 @@ class CourseControllerTest {
 
         String viewName = courseController.showHomepage(model, 0);
 
-        verify(model).addAttribute(eq("courses"), eq(coursePage.getContent()));
-        verify(model).addAttribute(eq("currentPage"), eq(0));
-        verify(model).addAttribute(eq("totalPages"), eq(coursePage.getTotalPages()));
+        verify(model).addAttribute("courses", coursePage.getContent());
+        verify(model).addAttribute("currentPage", 0);
+        verify(model).addAttribute("totalPages", coursePage.getTotalPages());
         assertEquals("homepage", viewName);
     }
 

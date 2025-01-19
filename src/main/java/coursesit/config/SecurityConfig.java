@@ -1,7 +1,6 @@
-package coursesit.Config;
+package coursesit.config;
 
 import coursesit.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,33 +14,37 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @Configuration
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    static final String LOGIN = "/login";
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login", "/css/**", "/js/**", "/homepage").permitAll()
+                        .requestMatchers("/register", LOGIN, "/css/**", "/js/**", "/homepage").permitAll()
                         .requestMatchers("/add-course").hasRole("ADMIN") //only admin can access /add-course
                         .requestMatchers("/course/*/edit", "/course/*/delete").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage(LOGIN)
                         .failureUrl("/login?error=true")
                         .defaultSuccessUrl("/profile", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl(LOGIN)
                         .permitAll()
                 )
                 .userDetailsService(customUserDetailsService)

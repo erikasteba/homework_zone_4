@@ -1,4 +1,4 @@
-package coursesit.Repositories;
+package coursesit.repositories;
 
 import coursesit.entities.User;
 import coursesit.entities.UserProfile;

@@ -1,6 +1,6 @@
 package coursesit.ServicesUT;
 
-import coursesit.Repositories.UserRepository;
+import coursesit.repositories.UserRepository;
 import coursesit.entities.User;
 import coursesit.services.CustomUserDetailsService;
 import org.junit.jupiter.api.BeforeEach;

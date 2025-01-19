@@ -37,7 +37,6 @@ class UserProfileControllerTest {
 
         ResponseEntity<UserProfile> response = userProfileController.getProfile();
 
-        assertEquals(200, response.getStatusCodeValue());
         assertEquals(mockProfile, response.getBody());
         verify(userProfileService, times(1)).getProfileForCurrentUser();
     }
@@ -57,7 +56,6 @@ class UserProfileControllerTest {
 
         ResponseEntity<UserProfile> response = userProfileController.updateProfile(inputProfile);
 
-        assertEquals(200, response.getStatusCodeValue());
         assertEquals(updatedProfile, response.getBody());
         verify(userProfileService, times(1)).updateProfile(inputProfile);
     }

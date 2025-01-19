@@ -1,6 +1,6 @@
 package coursesit.ServicesUT;
 
-import coursesit.Repositories.UserProfileRepository;
+import coursesit.repositories.UserProfileRepository;
 import coursesit.entities.Course;
 import coursesit.entities.User;
 import coursesit.entities.UserProfile;

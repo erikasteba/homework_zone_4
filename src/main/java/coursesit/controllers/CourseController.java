@@ -1,11 +1,12 @@
 package coursesit.controllers;
 
-import coursesit.Repositories.CourseRepository;
-import coursesit.Repositories.TopicRepository;
-import coursesit.Repositories.UserProfileRepository;
+import coursesit.repositories.CourseRepository;
+import coursesit.repositories.TopicRepository;
+import coursesit.repositories.UserProfileRepository;
 import coursesit.entities.*;
 import coursesit.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,23 +15,35 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class CourseController {
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final  CourseRepository courseRepository;
 
-    @Autowired
-    private UserProfileRepository userProfileRepository;
+    private final  UserProfileRepository userProfileRepository;
 
-    @Autowired
-    private UserService userService;
+    private final  UserService userService;
 
-    @Autowired
-    private TopicRepository topicRepository;
+    private final  TopicRepository topicRepository;
+
+    public CourseController(CourseRepository courseRepository,
+                            UserProfileRepository userProfileRepository,
+                            UserService userService,
+                            TopicRepository topicRepository) {
+        this.courseRepository = courseRepository;
+        this.userProfileRepository = userProfileRepository;
+        this.userService = userService;
+        this.topicRepository = topicRepository;
+    }
+
+    static final String ADD_COURSE = "add_course";
+    static final String COURSE_NOT_FOUND = "Course not found with id: ";
+    static final String TOPICS = "topics";
+    static final String COURSE = "course";
+
+    private static Logger logger = LoggerFactory.getLogger(CourseController.class);
 
     @GetMapping("/homepage")
     public String showHomepage(Model model, @RequestParam(defaultValue = "0") int page) {
@@ -46,8 +59,8 @@ public class CourseController {
 
     @GetMapping("/add-course")
     public String showAddCourseForm(Model model) {
-        model.addAttribute("course", new Course());
-        return "add_course";
+        model.addAttribute(COURSE, new Course());
+        return ADD_COURSE;
     }
 
     @PostMapping("/add-course")
@@ -69,7 +82,7 @@ public class CourseController {
             model.addAttribute("errorMessage", "Add at least 1 topic with content!");
             model.addAttribute("title", title);
             model.addAttribute("description", description);
-            return "add_course";
+            return ADD_COURSE;
         }
 
         // check topics are valid
@@ -78,7 +91,7 @@ public class CourseController {
                 model.addAttribute("errorMessage", "Each topic must have a title and content!");
                 model.addAttribute("title", title);
                 model.addAttribute("description", description);
-                return "add_course";
+                return ADD_COURSE;
             }
         }
 
@@ -108,7 +121,7 @@ public class CourseController {
         }
 
         courseRepository.save(course);
-        System.out.println("Course and topics successfully added.");
+        logger.info("Course and topics successfully added.");
         return "redirect:/homepage";
     }
 
@@ -117,9 +130,9 @@ public class CourseController {
     @GetMapping("/course/{id}")
     public String showCourseDetails(@PathVariable Long id, Model model) {
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
-        model.addAttribute("course", course);
-        model.addAttribute("topics", course.getTopics());
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + id));
+        model.addAttribute(COURSE, course);
+        model.addAttribute(TOPICS, course.getTopics());
 
         User currentUser = userService.getCurrentUser();
         boolean hasAccess = userProfileRepository.findByUser(currentUser)
@@ -127,7 +140,7 @@ public class CourseController {
                 .orElse(false);
         model.addAttribute("hasAccess", hasAccess);
 
-        System.out.println("Course is successfully shown");
+        logger.info("Course is successfully shown");
         return "course-details";
     }
 
@@ -139,7 +152,7 @@ public class CourseController {
     public String applyToCourse(@PathVariable Long id) {
         User currentUser = userService.getCurrentUser();
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + id));
 
         UserProfile userProfile = userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new RuntimeException("Profile not found for user: " + currentUser.getUsername()));
@@ -150,7 +163,7 @@ public class CourseController {
             userProfileRepository.save(userProfile);
         }
 
-        System.out.println("User successfully applied to course");
+        logger.info("User successfully applied to course");
         return "redirect:/profile";
     }
 
@@ -159,19 +172,19 @@ public class CourseController {
     public String unsubscribeFromCourse(@PathVariable Long id) {
         User currentUser = userService.getCurrentUser();
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + id));
 
         UserProfile userProfile = userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new RuntimeException("Profile not found for user: " + currentUser.getUsername()));
 
         if (userProfile.getCourses().contains(course)) {
             userProfile.getCourses().remove(course);
-            System.out.println("Removed user`s courses");
+            logger.info("Removed user`s courses");
             userProfileRepository.save(userProfile);
-            System.out.println("Updated user`s courses");
+            logger.info("Updated user`s courses");
         }
 
-        System.out.println("User successfully unsubscribed from course");
+        logger.info("User successfully unsubscribed from course");
         return "redirect:/profile";
     }
 
@@ -179,8 +192,8 @@ public class CourseController {
     @GetMapping("/course/{id}/edit")
     public String showEditCourseForm(@PathVariable Long id, Model model) {
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
-        model.addAttribute("course", course);
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + id));
+        model.addAttribute(COURSE, course);
         return "edit-course";
     }
 
@@ -200,7 +213,7 @@ public class CourseController {
                                @RequestParam(required = false) List<Long> removedTopicIds) {
 
         Course course = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + id));
 
         if (removedTopicIds != null) {
             removedTopicIds.forEach(topicRepository::deleteById);
@@ -214,7 +227,7 @@ public class CourseController {
 
             topic.setTitle(topicsTitles.get(i));
             topic.setContent(topicsContents.get(i));
-            System.out.println("Successfully edited topic information");
+            logger.info("Successfully edited topic information");
 
             if (testQuestions != null && i < testQuestions.size()) {
                 Test test = topic.getTest();
@@ -233,33 +246,33 @@ public class CourseController {
         course.setContent(content);
         courseRepository.save(course);
 
-        System.out.println("Successfully edited course information");
+        logger.info("Successfully edited course information");
         return "redirect:/course/" + id;
     }
 
     @GetMapping("/course/{courseId}/topics")
     public String showTopics(@PathVariable Long courseId, Model model) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + courseId));
 
         List<Topic> topics = topicRepository.findByCourseId(courseId);
-        model.addAttribute("course", course);
-        model.addAttribute("topics", topics);
-        return "topics";
+        model.addAttribute(COURSE, course);
+        model.addAttribute(TOPICS, topics);
+        return TOPICS;
     }
 
     @GetMapping("/course/{courseId}/topic/{topicId}")
     public String showTopic(@PathVariable Long courseId, @PathVariable Long topicId, Model model) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
+                .orElseThrow(() -> new RuntimeException(COURSE_NOT_FOUND + courseId));
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new RuntimeException("Topic not found with id: " + topicId));
 
-        model.addAttribute("course", course);
-        model.addAttribute("topics", course.getTopics());
+        model.addAttribute(COURSE, course);
+        model.addAttribute(TOPICS, course.getTopics());
         model.addAttribute("topic", topic);
 
-        System.out.println("Topic is successfully loaded");
+        logger.info("Topic is successfully loaded");
         return "topic";
     }
 
@@ -268,7 +281,7 @@ public class CourseController {
     public String deleteCourse(@PathVariable Long id) {
         courseRepository.deleteById(id);
 
-        System.out.println("Course is successfully deleted");
+        logger.info("Course is successfully deleted");
         return "redirect:/homepage";
     }
 

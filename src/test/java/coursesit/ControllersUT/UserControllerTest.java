@@ -1,7 +1,7 @@
 package coursesit.ControllersUT;
 
-import coursesit.Repositories.UserProfileRepository;
-import coursesit.Repositories.UserRepository;
+import coursesit.repositories.UserProfileRepository;
+import coursesit.repositories.UserRepository;
 import coursesit.controllers.UserController;
 import coursesit.entities.User;
 import coursesit.entities.UserProfile;

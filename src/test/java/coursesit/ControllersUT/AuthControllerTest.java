@@ -57,15 +57,15 @@ class AuthControllerTest {
     @Test
     void testShowLoginFormWithError() {
 
-        Model model = mock(Model.class);
+        Model modelMock = mock(Model.class);
 
-        String viewName = authController.showLoginForm("Invalid username or password", model);
+        String viewName = authController.showLoginForm("Invalid username or password", modelMock);
 
         // checking that viewName is same as "login"
         assertEquals("login", viewName);
 
-        // checking that atribute error is added to the model
-        verify(model, times(1)).addAttribute("error", "Invalid username or password");
+        // checking that atribute error is added to the modelMock
+        verify(modelMock, times(1)).addAttribute("error", "Invalid username or password");
     }
 
 }

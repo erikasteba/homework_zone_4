@@ -1,8 +1,8 @@
 package coursesit.services;
 
 
-import coursesit.Repositories.UserProfileRepository;
-import coursesit.Repositories.UserRepository;
+import coursesit.repositories.UserProfileRepository;
+import coursesit.repositories.UserRepository;
 import coursesit.entities.User;
 import coursesit.entities.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +13,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserProfileRepository userProfileRepository;
+    private final UserProfileRepository userProfileRepository;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserProfileRepository userProfileRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userProfileRepository = userProfileRepository;
+    }
 
     public boolean isUsernameTaken(String username) {
         return userRepository.existsByUsername(username);
@@ -43,12 +46,12 @@ public class UserService {
     public User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
-            String username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
+        if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+            String username = userDetails.getUsername();
             return userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found: " + username));
         } else {
-            throw new RuntimeException("Authentication principal is not of type UserDetails");
+            throw new IllegalArgumentException("Authentication principal is not of type UserDetails");
         }
     }
 
